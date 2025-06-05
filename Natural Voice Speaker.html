@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Text-to-Speech</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8fafb 0%, #e8f2f1 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 106, 77, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #006A4D 0%, #0B3122 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+            .header h1 {
+                font-size: 2rem;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+            }
+
+            .header p {
+                opacity: 0.9;
+                font-size: 1rem;
+            }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #006A4D;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+            .section-title::before {
+                content: '';
+                width: 4px;
+                height: 20px;
+                background: #006A4D;
+                margin-right: 0.75rem;
+                border-radius: 2px;
+            }
+
+        .text-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 1rem;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            font-size: 1rem;
+            line-height: 1.5;
+            resize: vertical;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+            .text-input:focus {
+                outline: none;
+                border-color: #006A4D;
+                box-shadow: 0 0 0 3px rgba(0, 106, 77, 0.1);
+            }
+
+        .language-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .lang-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #006A4D;
+            background: white;
+            color: #006A4D;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .lang-count {
+            background: rgba(0, 106, 77, 0.15);
+            color: #006A4D;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            min-width: 20px;
+        }
+
+        .lang-btn.active .lang-count {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .lang-btn:hover {
+            background: #f0f7f5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 106, 77, 0.2);
+        }
+
+        .lang-btn.active {
+            background: #006A4D;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 106, 77, 0.3);
+        }
+
+        .voice-selector {
+            margin-bottom: 1.5rem;
+        }
+
+        .voice-info {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: #f8fafb;
+            border-radius: 8px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .voice-info-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .voice-quality {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .voice-details {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+
+        .voice-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+            .voice-select option {
+                padding: 0.5rem;
+                font-size: 0.95rem;
+            }
+
+                .voice-select option:first-child {
+                    color: #006A4D;
+                    font-weight: 600;
+                }
+
+            .voice-select:focus {
+                outline: none;
+                border-color: #006A4D;
+                box-shadow: 0 0 0 3px rgba(0, 106, 77, 0.1);
+            }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .control-group {
+            background: #f8fafb;
+            padding: 1.25rem;
+            border-radius: 12px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .control-value {
+            background: #006A4D;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e1e8ed;
+            outline: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+            .slider::-webkit-slider-thumb {
+                appearance: none;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #006A4D;
+                cursor: pointer;
+                box-shadow: 0 2px 6px rgba(0, 106, 77, 0.3);
+                transition: all 0.3s ease;
+            }
+
+                .slider::-webkit-slider-thumb:hover {
+                    transform: scale(1.2);
+                    box-shadow: 0 4px 12px rgba(0, 106, 77, 0.4);
+                }
+
+            .slider::-moz-range-thumb {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #006A4D;
+                cursor: pointer;
+                border: none;
+                box-shadow: 0 2px 6px rgba(0, 106, 77, 0.3);
+            }
+
+            .slider::-moz-range-track {
+                height: 6px;
+                border-radius: 3px;
+                background: #e1e8ed;
+                border: none;
+            }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #006A4D 0%, #0B3122 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 106, 77, 0.3);
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(0, 106, 77, 0.4);
+            }
+
+        .btn-secondary {
+            background: white;
+            color: #006A4D;
+            border: 2px solid #006A4D;
+        }
+
+            .btn-secondary:hover {
+                background: #f0f7f5;
+                transform: translateY(-2px);
+            }
+
+        .status {
+            text-align: center;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+            .status.speaking {
+                background: #e8f5e8;
+                color: #2d6a2d;
+                border: 1px solid #c3e6c3;
+            }
+
+        @media (max-width: 768px) {
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .language-buttons {
+                justify-content: center;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Professional Text-to-Speech</h1>
+            <p>Advanced natural voice synthesis with multilingual support</p>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <div class="section-title">Text Input</div>
+                <textarea id="text" class="text-input" placeholder="Enter your text here... The application will convert it to natural speech using advanced voice synthesis.">Hello! This is a professional text-to-speech application with natural voice synthesis.</textarea>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Language Selection</div>
+                <div class="language-buttons">
+                    <button class="lang-btn active" data-lang="en-US">🇺🇸 English <span class="lang-count" id="count-en-US"></span></button>
+                    <button class="lang-btn" data-lang="ja-JP">🇯🇵 Japanese <span class="lang-count" id="count-ja-JP"></span></button>
+                    <button class="lang-btn" data-lang="vi-VN">🇻🇳 Vietnamese <span class="lang-count" id="count-vi-VN"></span></button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Voice Selection</div>
+                <div class="voice-selector">
+                    <select id="voiceSelect" class="voice-select">
+                        <option>Loading available voices...</option>
+                    </select>
+                    <div id="voiceInfo" class="voice-info" style="display: none;">
+                        <div class="voice-info-content">
+                            <span id="voiceQuality" class="voice-quality"></span>
+                            <span id="voiceDetails" class="voice-details"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Voice Controls</div>
+                <div class="controls-grid">
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Speech Rate</span>
+                            <span class="control-value" id="rateValue">1.0x</span>
+                        </div>
+                        <input type="range" id="rateSlider" class="slider" min="0.5" max="2.0" step="0.1" value="1.0">
+                    </div>
+                    <div class="control-group">
+                        <div class="control-label">
+                            <span>Pitch Level</span>
+                            <span class="control-value" id="pitchValue">1.0</span>
+                        </div>
+                        <input type="range" id="pitchSlider" class="slider" min="0.5" max="2.0" step="0.1" value="1.0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="action-buttons">
+                    <button id="speakBtn" class="btn btn-primary">
+                        <span>🎤</span> Speak Text
+                    </button>
+                    <button id="stopBtn" class="btn btn-secondary">
+                        <span>⏹️</span> Stop
+                    </button>
+                </div>
+                <div id="status" class="status" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const synth = window.speechSynthesis;
+        const voiceSelect = document.getElementById('voiceSelect');
+        const textArea = document.getElementById('text');
+        const langButtons = document.querySelectorAll('.lang-btn');
+        const speakBtn = document.getElementById('speakBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const rateSlider = document.getElementById('rateSlider');
+        const pitchSlider = document.getElementById('pitchSlider');
+        const rateValue = document.getElementById('rateValue');
+        const pitchValue = document.getElementById('pitchValue');
+        const status = document.getElementById('status');
+        const voiceInfo = document.getElementById('voiceInfo');
+        const voiceQuality = document.getElementById('voiceQuality');
+        const voiceDetails = document.getElementById('voiceDetails');
+
+        let voices = [];
+        let currentLang = 'en-US';
+
+        // Voice selection change handler
+        voiceSelect.addEventListener('change', updateVoiceInfo);
+
+        function updateVoiceInfo() {
+            const selectedIndex = voiceSelect.value;
+            if (selectedIndex && voices[selectedIndex]) {
+                const voice = voices[selectedIndex];
+                const score = getVoiceQualityScore(voice);
+                const qualityLabel = getVoiceQualityLabel(score);
+
+                voiceQuality.textContent = qualityLabel;
+                voiceDetails.textContent = `${voice.lang} • ${voice.localService ? 'Local' : 'Cloud-based'}`;
+                voiceInfo.style.display = 'block';
+            } else {
+                voiceInfo.style.display = 'none';
+            }
+        }
+
+        // Language switching functionality
+        langButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active button
+                langButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Update current language
+                currentLang = btn.dataset.lang;
+
+                // Update voice dropdown
+                populateVoices();
+            });
+        });
+
+        // Slider value updates
+        rateSlider.addEventListener('input', () => {
+            rateValue.textContent = rateSlider.value + 'x';
+        });
+
+        pitchSlider.addEventListener('input', () => {
+            pitchValue.textContent = pitchSlider.value;
+        });
+
+        function updateLanguageCounts() {
+            const languages = ['en-US', 'ja-JP', 'vi-VN'];
+            languages.forEach(lang => {
+                const count = voices.filter(voice => voice.lang.includes(lang)).length;
+                const countElement = document.getElementById(`count-${lang}`);
+                if (countElement) {
+                    countElement.textContent = count || '0';
+                }
+            });
+        }
+
+        function getVoiceQualityScore(voice) {
+            let score = 0;
+            const name = voice.name.toLowerCase();
+
+            // Premium quality indicators (highest priority)
+            if (name.includes('neural') || name.includes('wavenet')) score += 100;
+            if (name.includes('natural') || name.includes('premium')) score += 90;
+            if (name.includes('enhanced') || name.includes('improved')) score += 80;
+
+            // Platform-specific high quality voices
+            if (name.includes('aria') || name.includes('guy') || name.includes('zira')) score += 70; // Windows premium
+            if (name.includes('alex') || name.includes('victoria') || name.includes('samantha')) score += 70; // macOS premium
+            if (name.includes('google') && !voice.localService) score += 60; // Google Cloud voices
+
+            // Voice characteristics
+            if (!voice.localService) score += 30; // Cloud-based usually better
+            if (voice.default) score += 20; // Default often good quality
+
+            // Avoid obviously low-quality voices
+            if (name.includes('robot') || name.includes('whisper') || name.includes('novelty')) score -= 50;
+            if (name.includes('microsoft david') || name.includes('microsoft zira')) score -= 20; // Older voices
+
+            return score;
+        }
+
+        function getVoiceQualityLabel(score) {
+            if (score >= 100) return '🌟 Premium';
+            if (score >= 80) return '⭐ High Quality';
+            if (score >= 60) return '✨ Good';
+            if (score >= 40) return '📢 Standard';
+            return '🔊 Basic';
+        }
+
+        function populateVoices() {
+            voices = synth.getVoices();
+            voiceSelect.innerHTML = '';
+
+            // Update language counts
+            updateLanguageCounts();
+
+            // Filter voices for current language
+            const languageVoices = voices.filter(voice => voice.lang.includes(currentLang));
+
+            if (languageVoices.length === 0) {
+                const placeholder = document.createElement('option');
+                placeholder.value = '';
+                placeholder.textContent = `No voices available for ${currentLang}`;
+                placeholder.disabled = true;
+                voiceSelect.appendChild(placeholder);
+                return;
+            }
+
+            // Score and sort voices by quality
+            const scoredVoices = languageVoices.map(voice => ({
+                voice,
+                score: getVoiceQualityScore(voice),
+                index: voices.indexOf(voice)
+            })).sort((a, b) => b.score - a.score);
+
+            // Populate dropdown with quality indicators
+            scoredVoices.forEach(({ voice, score, index }) => {
+                const option = document.createElement('option');
+                option.value = index;
+                const qualityLabel = getVoiceQualityLabel(score);
+                option.textContent = `${qualityLabel} ${voice.name}${voice.default ? ' (Default)' : ''}`;
+                voiceSelect.appendChild(option);
+            });
+
+            // Auto-select highest quality voice
+            if (scoredVoices.length > 0) {
+                voiceSelect.value = scoredVoices[0].index;
+                updateVoiceInfo(); // Show info for auto-selected voice
+            }
+        }
+
+        function showStatus(message, isActive = false) {
+            status.textContent = message;
+            status.style.display = 'block';
+            status.className = `status ${isActive ? 'speaking' : ''}`;
+
+            if (!isActive) {
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Speech synthesis
+        speakBtn.addEventListener('click', () => {
+            const text = textArea.value.trim();
+            if (!text) {
+                showStatus('⚠️ Please enter some text first.');
+                return;
+            }
+
+            const selectedIndex = voiceSelect.value;
+            if (selectedIndex === '') {
+                showStatus('⚠️ No valid voice selected.');
+                return;
+            }
+
+            // Stop any ongoing speech
+            synth.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            const chosenVoice = voices[selectedIndex];
+
+            if (chosenVoice) {
+                utterance.voice = chosenVoice;
+            }
+
+            // Apply rate and pitch settings
+            utterance.rate = parseFloat(rateSlider.value);
+            utterance.pitch = parseFloat(pitchSlider.value);
+
+            // Event handlers
+            utterance.onstart = () => {
+                showStatus('🎤 Speaking...', true);
+                speakBtn.disabled = true;
+            };
+
+            utterance.onend = () => {
+                showStatus('✅ Speech completed.');
+                speakBtn.disabled = false;
+            };
+
+            utterance.onerror = (event) => {
+                showStatus(`❌ Error: ${event.error}`);
+                speakBtn.disabled = false;
+            };
+
+            synth.speak(utterance);
+        });
+
+        stopBtn.addEventListener('click', () => {
+            synth.cancel();
+            showStatus('⏹️ Speech stopped.');
+            speakBtn.disabled = false;
+        });
+
+        // Initialize voices
+        populateVoices();
+
+        // Handle voice loading
+        if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = populateVoices;
+        }
+
+        // Handle browser support
+        if (!('speechSynthesis' in window)) {
+            showStatus('❌ Speech synthesis not supported in this browser.');
+            speakBtn.disabled = true;
+        } else {
+            // Initial language count update
+            setTimeout(updateLanguageCounts, 100);
+        }
+    </script>
+</body>
+</html>
