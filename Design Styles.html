@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Styles & Color Palettes Matrix</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .matrix-container {
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 8px;
+            min-width: 1200px;
+        }
+
+        .header-row {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .header-cell {
+            padding: 15px 10px;
+            text-align: center;
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            font-size: 0.9em;
+            position: relative;
+            min-width: 120px;
+        }
+
+        .style-header {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white;
+            padding: 20px 15px;
+            font-weight: 700;
+            border-radius: 8px;
+            writing-mode: horizontal-tb;
+            min-width: 200px;
+        }
+
+        .palette-cell {
+            padding: 15px;
+            border-radius: 12px;
+            height: 180px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            min-width: 120px;
+        }
+
+            .palette-cell:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+                border-color: #667eea;
+            }
+
+        .palette-preview {
+            height: 60px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .color-swatch {
+            flex: 1;
+            transition: all 0.3s ease;
+        }
+
+            .color-swatch:hover {
+                flex: 2;
+            }
+
+        .palette-info {
+            font-size: 0.75em;
+            line-height: 1.3;
+            color: #444;
+            overflow: hidden;
+        }
+
+        .button-demo {
+            margin-top: 8px;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.7em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+            .button-demo:hover {
+                transform: scale(1.05);
+            }
+
+        /* Specific style implementations */
+        .neumorphic {
+            background: #E0E0E0;
+            box-shadow: 8px 8px 16px #B0B0B0, -8px -8px 16px #FFFFFF;
+        }
+
+            .neumorphic .button-demo {
+                background: #E0E0E0;
+                box-shadow: 4px 4px 8px #B0B0B0, -4px -4px 8px #FFFFFF;
+                color: #4F4F4F;
+            }
+
+        .pastel {
+            background: #F2F2F2;
+            border: 1px solid #E0E0E0;
+        }
+
+        .glassmorphic {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .minimalist {
+            background: #FFFFFF;
+            border: 1px solid #E0E0E0;
+        }
+
+        .material {
+            background: #FFFFFF;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .gradient-heavy {
+            background: linear-gradient(135deg, var(--grad-start, #ddd), var(--grad-end, #999));
+        }
+
+        .vaporwave {
+            background: repeating-linear-gradient( 45deg, transparent, transparent 10px, rgba(255, 255, 255, 0.1) 10px, rgba(255, 255, 255, 0.1) 20px );
+        }
+
+        .dark-neon {
+            background: #121212;
+            color: #E0E0E0;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .brutalist {
+            background: #FFFFFF;
+            border: 3px solid #000000;
+            border-radius: 0;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            font-size: 0.85em;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .palette-cell {
+                height: 140px;
+                padding: 10px;
+            }
+
+            .palette-preview {
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Design Styles & Color Palettes Matrix</h1>
+
+        <div class="matrix-container">
+            <table class="matrix-table">
+                <thead>
+                    <tr class="header-row">
+                        <th class="style-header">Design Style</th>
+                        <th class="header-cell">Achromatic</th>
+                        <th class="header-cell">Monochromatic</th>
+                        <th class="header-cell">Duochromatic</th>
+                        <th class="header-cell">Analogous</th>
+                        <th class="header-cell">Split-Complementary</th>
+                        <th class="header-cell">Complementary</th>
+                        <th class="header-cell">Triadic</th>
+                        <th class="header-cell">Tetradic</th>
+                        <th class="header-cell">Square</th>
+                        <th class="header-cell">Quintadic</th>
+                    </tr>
+                </thead>
+                <tbody id="matrixBody">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ddd;"></div>
+                <span>Hover cells to see details</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(45deg, #667eea, #764ba2);"></div>
+                <span>Interactive color swatches</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #2c3e50;"></div>
+                <span>Live button demos</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const designStyles = [
+            {
+                name: "Neumorphic Soft UI",
+                class: "neumorphic",
+                palettes: [
+                    { colors: ["#E0E0E0", "#B0B0B0", "#FFFFFF", "#4F4F4F"], bg: "#E0E0E0", text: "#4F4F4F", btn: "#E0E0E0" },
+                    { colors: ["#E6F3FF", "#B3D9FF", "#0066CC", "#003366"], bg: "#E6F3FF", text: "#003366", btn: "#B3D9FF" },
+                    { colors: ["#F0FFF0", "#C0FFC0", "#006600", "#003300"], bg: "#F0FFF0", text: "#003300", btn: "#C0FFC0" },
+                    { colors: ["#E0FFFF", "#B0EEEE", "#008B8B", "#004040"], bg: "#E0FFFF", text: "#004040", btn: "#B0EEEE" },
+                    { colors: ["#E6F3FF", "#FFE4B3", "#0066CC", "#FF8000"], bg: "#E6F3FF", text: "#0066CC", btn: "#FFE4B3" },
+                    { colors: ["#E0FFFF", "#FFB366", "#008B8B", "#FF4500"], bg: "#E0FFFF", text: "#008B8B", btn: "#FFB366" },
+                    { colors: ["#F0E6FF", "#FFE4B3", "#FF99CC", "#8000FF"], bg: "#F0E6FF", text: "#8000FF", btn: "#FFE4B3" },
+                    { colors: ["#FFE4E6", "#B3FFB3", "#99FFFF", "#CC0033"], bg: "#FFE4E6", text: "#CC0033", btn: "#B3FFB3" },
+                    { colors: ["#E6F3FF", "#FFB3E6", "#B3FFB3", "#E6B3FF"], bg: "#E6F3FF", text: "#0066CC", btn: "#FFB3E6" },
+                    { colors: ["#FFFEF0", "#B3FFFF", "#FFB3E6", "#FFFF99", "#B3FFB3", "#FFB366"], bg: "#FFFEF0", text: "#333", btn: "#B3FFFF" }
+                ]
+            },
+            {
+                name: "Pastel Soft UI",
+                class: "pastel",
+                palettes: [
+                    { colors: ["#F2F2F2", "#D9D9D9", "#FFFFFF", "#424242"], bg: "#F2F2F2", text: "#424242", btn: "#D9D9D9" },
+                    { colors: ["#FFE4E6", "#FFB3B8", "#FF6B7A", "#2C2C2C"], bg: "#FFE4E6", text: "#2C2C2C", btn: "#FFB3B8" },
+                    { colors: ["#E8F5E8", "#B8E6B8", "#87D987", "#2C2C2C"], bg: "#E8F5E8", text: "#2C2C2C", btn: "#B8E6B8" },
+                    { colors: ["#FFE8CC", "#FFCC99", "#FF9966", "#2C2C2C"], bg: "#FFE8CC", text: "#2C2C2C", btn: "#FFCC99" },
+                    { colors: ["#E8E8FF", "#FFFFE0", "#FFE4B3", "#2C2C2C"], bg: "#E8E8FF", text: "#2C2C2C", btn: "#FFFFE0" },
+                    { colors: ["#E8F5E8", "#FFE4CC", "#87D987", "#2C2C2C"], bg: "#E8F5E8", text: "#2C2C2C", btn: "#FFE4CC" },
+                    { colors: ["#FFFACD", "#FFE4CC", "#E0E6FF", "#2C2C2C"], bg: "#FFFACD", text: "#2C2C2C", btn: "#FFE4CC" },
+                    { colors: ["#FFE4E6", "#B8E6E6", "#E0FFFF", "#2C2C2C"], bg: "#FFE4E6", text: "#2C2C2C", btn: "#B8E6E6" },
+                    { colors: ["#E8E8FF", "#FFE4E6", "#E8F5E8", "#E0F0FF"], bg: "#E8E8FF", text: "#2C2C2C", btn: "#FFE4E6" },
+                    { colors: ["#FFFEF0", "#E0FFFF", "#FFE4E6", "#FFFACD", "#E8F5E8", "#FFE4CC"], bg: "#FFFEF0", text: "#2C2C2C", btn: "#E0FFFF" }
+                ]
+            },
+            {
+                name: "Glassmorphic Translucent UI",
+                class: "glassmorphic",
+                palettes: [
+                    { colors: ["rgba(255,255,255,0.3)", "#B0B0B0", "#FFFFFF", "#4F4F4F"], bg: "rgba(255,255,255,0.3)", text: "#4F4F4F", btn: "rgba(200,200,200,0.5)" },
+                    { colors: ["rgba(173,216,230,0.4)", "#4169E1", "#87CEEB", "#FFFFFF"], bg: "rgba(173,216,230,0.4)", text: "#FFFFFF", btn: "rgba(65,105,225,0.5)" },
+                    { colors: ["rgba(152,251,152,0.4)", "#98FB98", "#90EE90", "#FFFFFF"], bg: "rgba(152,251,152,0.4)", text: "#FFFFFF", btn: "rgba(152,251,152,0.5)" },
+                    { colors: ["rgba(64,224,208,0.4)", "#40E0D0", "#48D1CC", "#F0F0F0"], bg: "rgba(64,224,208,0.4)", text: "#F0F0F0", btn: "rgba(64,224,208,0.5)" },
+                    { colors: ["rgba(135,206,235,0.4)", "#87CEEB", "#FFDAB9", "#F0F0F0"], bg: "rgba(135,206,235,0.4)", text: "#F0F0F0", btn: "rgba(135,206,235,0.5)" },
+                    { colors: ["rgba(64,224,208,0.4)", "#40E0D0", "#FF4500", "#F0F0F0"], bg: "rgba(64,224,208,0.4)", text: "#F0F0F0", btn: "rgba(64,224,208,0.5)" },
+                    { colors: ["rgba(230,230,250,0.4)", "#E6E6FA", "#DAA520", "#FF69B4"], bg: "rgba(230,230,250,0.4)", text: "#F0F0F0", btn: "rgba(230,230,250,0.5)" },
+                    { colors: ["rgba(255,182,193,0.4)", "#FFB6C1", "#90EE90", "#00FFFF"], bg: "rgba(255,182,193,0.4)", text: "#FFFFFF", btn: "rgba(255,182,193,0.5)" },
+                    { colors: ["rgba(135,206,235,0.4)", "#87CEEB", "#FF1493", "#32CD32", "#8A2BE2"], bg: "rgba(135,206,235,0.4)", text: "#FFFFFF", btn: "rgba(135,206,235,0.5)" },
+                    { colors: ["rgba(255,248,220,0.4)", "#FFF8DC", "#00FFFF", "#FF69B4", "#FFFF00", "#32CD32", "#FF4500"], bg: "rgba(255,248,220,0.4)", text: "#FFFFFF", btn: "rgba(255,248,220,0.5)" }
+                ]
+            },
+            {
+                name: "Minimalist Flat Design",
+                class: "minimalist",
+                palettes: [
+                    { colors: ["#FFFFFF", "#424242", "#212121"], bg: "#FFFFFF", text: "#212121", btn: "#424242" },
+                    { colors: ["#E3F2FD", "#1976D2", "#0D47A1"], bg: "#E3F2FD", text: "#0D47A1", btn: "#1976D2" },
+                    { colors: ["#E8F5E8", "#4CAF50", "#1B5E20"], bg: "#E8F5E8", text: "#212121", btn: "#4CAF50" },
+                    { colors: ["#FFFFFF", "#00BCD4", "#26A69A", "#00695C"], bg: "#FFFFFF", text: "#212121", btn: "#00BCD4" },
+                    { colors: ["#FFFFFF", "#2196F3", "#FFAB91", "#FFC107"], bg: "#FFFFFF", text: "#212121", btn: "#2196F3" },
+                    { colors: ["#FFFFFF", "#009688", "#FF5722"], bg: "#FFFFFF", text: "#212121", btn: "#009688" },
+                    { colors: ["#FFFFFF", "#9C27B0", "#FFC107", "#E91E63"], bg: "#FFFFFF", text: "#212121", btn: "#9C27B0" },
+                    { colors: ["#FFFFFF", "#E91E63", "#4CAF50", "#00BCD4"], bg: "#FFFFFF", text: "#212121", btn: "#E91E63" },
+                    { colors: ["#FFFFFF", "#2196F3", "#FF1493", "#32CD32", "#8A2BE2"], bg: "#FFFFFF", text: "#212121", btn: "#2196F3" },
+                    { colors: ["#FFFFFF", "#FFF8DC", "#00FFFF", "#FF69B4", "#FFFF00", "#32CD32", "#FF4500"], bg: "#FFFFFF", text: "#212121", btn: "#FFF8DC" }
+                ]
+            },
+            {
+                name: "Monochrome with Single Accent",
+                class: "minimalist",
+                palettes: [
+                    { colors: ["#F5F5F5", "#333333", "#FF0000"], bg: "#F5F5F5", text: "#333333", btn: "#FF0000" },
+                    { colors: ["#E3F2FD", "#0D47A1", "#1976D2"], bg: "#E3F2FD", text: "#0D47A1", btn: "#1976D2" },
+                    { colors: ["#E8F5E8", "#1B5E20", "#2E7D32"], bg: "#E8F5E8", text: "#1B5E20", btn: "#2E7D32" },
+                    { colors: ["#E0F7FA", "#004D40", "#00695C"], bg: "#E0F7FA", text: "#004D40", btn: "#00695C" },
+                    { colors: ["#E3F2FD", "#0D47A1", "#FF5722"], bg: "#E3F2FD", text: "#0D47A1", btn: "#FF5722" },
+                    { colors: ["#E0F7FA", "#004D40", "#FF5722"], bg: "#E0F7FA", text: "#004D40", btn: "#FF5722" },
+                    { colors: ["#F3E5F5", "#4A148C", "#FFC107"], bg: "#F3E5F5", text: "#4A148C", btn: "#FFC107" },
+                    { colors: ["#FCE4EC", "#880E4F", "#4CAF50"], bg: "#FCE4EC", text: "#880E4F", btn: "#4CAF50" },
+                    { colors: ["#E1F5FE", "#01579B", "#FF1493"], bg: "#E1F5FE", text: "#01579B", btn: "#FF1493" },
+                    { colors: ["#FFFFFF", "#000000", "#FFF8DC", "#00FFFF", "#FF69B4", "#FFFF00", "#32CD32"], bg: "#FFFFFF", text: "#000000", btn: "#FFF8DC" }
+                ]
+            },
+            {
+                name: "Google Material Design",
+                class: "material",
+                palettes: [
+                    { colors: ["#FFFFFF", "#212121", "#9E9E9E"], bg: "#FFFFFF", text: "#212121", btn: "#9E9E9E" },
+                    { colors: ["#E3F2FD", "#212121", "#1976D2"], bg: "#E3F2FD", text: "#212121", btn: "#1976D2" },
+                    { colors: ["#E8F5E8", "#212121", "#4CAF50", "#2E7D32"], bg: "#E8F5E8", text: "#212121", btn: "#4CAF50" },
+                    { colors: ["#FFFFFF", "#212121", "#00BCD4", "#009688", "#26A69A"], bg: "#FFFFFF", text: "#212121", btn: "#00BCD4" },
+                    { colors: ["#FFFFFF", "#212121", "#2196F3", "#FFAB91"], bg: "#FFFFFF", text: "#212121", btn: "#2196F3" },
+                    { colors: ["#FFFFFF", "#212121", "#009688", "#FF5722"], bg: "#FFFFFF", text: "#212121", btn: "#009688" },
+                    { colors: ["#FFFFFF", "#212121", "#9C27B0", "#FFC107", "#E91E63"], bg: "#FFFFFF", text: "#212121", btn: "#9C27B0" },
+                    { colors: ["#FFFFFF", "#212121", "#E91E63", "#4CAF50", "#00BCD4"], bg: "#FFFFFF", text: "#212121", btn: "#E91E63" },
+                    { colors: ["#FFFFFF", "#212121", "#2196F3", "#FF1493", "#32CD32", "#8A2BE2"], bg: "#FFFFFF", text: "#212121", btn: "#2196F3" },
+                    { colors: ["#FFFFFF", "#212121", "#FFF8DC", "#00FFFF", "#FF69B4", "#FFFF00", "#32CD32"], bg: "#FFFFFF", text: "#212121", btn: "#FFF8DC" }
+                ]
+            },
+            {
+                name: "Vibrant Gradient-Heavy UI",
+                class: "gradient-heavy",
+                palettes: [
+                    { colors: ["#DDDDDD", "#999999", "#212121"], bg: "linear-gradient(135deg, #DDDDDD, #999999)", text: "#212121", btn: "#666666" },
+                    { colors: ["#E3F2FD", "#1976D2", "#0D47A1", "#FFFFFF"], bg: "linear-gradient(135deg, #E3F2FD, #0D47A1)", text: "#FFFFFF", btn: "#1976D2" },
+                    { colors: ["#E8F5E8", "#4CAF50", "#1B5E20", "#FFFFFF"], bg: "linear-gradient(135deg, #E8F5E8, #1B5E20)", text: "#FFFFFF", btn: "#4CAF50" },
+                    { colors: ["#E0F7FA", "#00BCD4", "#004D40", "#FFFFFF"], bg: "linear-gradient(135deg, #E0F7FA, #004D40)", text: "#FFFFFF", btn: "#00BCD4" },
+                    { colors: ["#E3F2FD", "#1976D2", "#FF5722", "#FFFFFF"], bg: "linear-gradient(135deg, #E3F2FD, #1976D2)", text: "#FFFFFF", btn: "#FF5722" },
+                    { colors: ["#E0F7FA", "#009688", "#FF5722", "#FFFFFF"], bg: "linear-gradient(135deg, #E0F7FA, #009688)", text: "#FFFFFF", btn: "#FF5722" },
+                    { colors: ["#F3E5F5", "#9C27B0", "#E91E63", "#FFC107"], bg: "linear-gradient(135deg, #F3E5F5, #9C27B0, #FFC107)", text: "#FFFFFF", btn: "#E91E63" },
+                    { colors: ["#FCE4EC", "#E91E63", "#4CAF50", "#00BCD4"], bg: "linear-gradient(135deg, #FCE4EC, #E91E63, #4CAF50)", text: "#FFFFFF", btn: "#00BCD4" },
+                    { colors: ["#E1F5FE", "#2196F3", "#FF1493", "#32CD32", "#8A2BE2"], bg: "linear-gradient(135deg, #E1F5FE, #2196F3, #FF1493, #32CD32)", text: "#000000", btn: "#8A2BE2" },
+                    { colors: ["#FFF8DC", "#00FFFF", "#FF69B4", "#FFFF00", "#32CD32", "#FF4500"], bg: "linear-gradient(135deg, #FFF8DC, #00FFFF, #FF69B4, #FFFF00, #32CD32, #FF4500)", text: "#000000", btn: "#FF4500" }
+                ]
+            },
+            {
+                name: "Retro Vaporwave UI",
+                class: "vaporwave",
+                palettes: [
+                    { colors: ["#F0F0F0", "#CCCCCC", "#000000"], bg: "#F0F0F0", text: "#000000", btn: "#CCCCCC" },
+                    { colors: ["#FFB6C1", "#FF69B4", "#000000"], bg: "#FFB6C1", text: "#000000", btn: "#FF69B4" },
+                    { colors: ["#FFB6C1", "#40E0D0", "#000000"], bg: "linear-gradient(45deg, #FFB6C1, #40E0D0)", text: "#000000", btn: "#FF69B4" },
+                    { colors: ["#FFB6C1", "#8A2BE2", "#40E0D0", "#FFFFFF"], bg: "linear-gradient(135deg, #FFB6C1, #8A2BE2)", text: "#FFFFFF", btn: "#40E0D0" },
+                    { colors: ["#87CEEB", "#FF69B4", "#40E0D0", "#FFDAB9"], bg: "linear-gradient(135deg, #87CEEB, #FF69B4)", text: "#000000", btn: "#FFDAB9" },
+                    { colors: ["#40E0D0", "#FF69B4", "#FF4500", "#000000"], bg: "linear-gradient(135deg, #40E0D0, #FF69B4)", text: "#000000", btn: "#FF4500" },
+                    { colors: ["#FFFF00", "#FF69B4", "#00FFFF", "#000000"], bg: "linear-gradient(135deg, #FFFF00, #FF69B4, #00FFFF)", text: "#000000", btn: "#FF69B4" },
+                    { colors: ["#FF69B4", "#98FB98", "#00FFFF", "#000000"], bg: "linear-gradient(135deg, #FF69B4, #98FB98, #00FFFF)", text: "#000000", btn: "#98FB98" },
+                    { colors: ["#FF69B4", "#00FFFF", "#32CD32", "#000000"], bg: "linear-gradient(135deg, #FF69B4, #00FFFF, #32CD32)", text: "#000000", btn: "#32CD32" },
+                    { colors: ["#FFF8DC", "#FF69B4", "#00FFFF", "#32CD32", "#FF4500"], bg: "linear-gradient(135deg, #FFF8DC, #FF69B4, #00FFFF, #32CD32, #FF4500)", text: "#000000", btn: "#FF69B4" }
+                ]
+            },
+            {
+                name: "Dark Mode with Neon Accents",
+                class: "dark-neon",
+                palettes: [
+                    { colors: ["#121212", "#E0E0E0", "#00FFFF"], bg: "#121212", text: "#E0E0E0", btn: "#1E1E1E" },
+                    { colors: ["#101010", "#87CEEB", "#0080FF"], bg: "#101010", text: "#87CEEB", btn: "#0080FF" },
+                    { colors: ["#0F0F0F", "#00FF7F", "#32CD32"], bg: "#0F0F0F", text: "#00FF7F", btn: "#32CD32" },
+                    { colors: ["#0F0F0F", "#CCCCCC", "#40E0D0", "#26A69A"], bg: "#0F0F0F", text: "#CCCCCC", btn: "#40E0D0" },
+                    { colors: ["#121212", "#FFFFFF", "#2196F3", "#FF5722"], bg: "#121212", text: "#FFFFFF", btn: "#2196F3" },
+                    { colors: ["#121212", "#E0E0E0", "#40E0D0", "#FF4500"], bg: "#121212", text: "#E0E0E0", btn: "#40E0D0" },
+                    { colors: ["#1E1E1E", "#E0E0E0", "#DA70D6", "#FFD700", "#FF69B4"], bg: "#1E1E1E", text: "#E0E0E0", btn: "#DA70D6" },
+                    { colors: ["#121212", "#E0E0E0", "#FF1493", "#32CD32", "#00FFFF"], bg: "#121212", text: "#E0E0E0", btn: "#FF1493" },
+                    { colors: ["#0D0D0D", "#FFFFFF", "#87CEEB", "#FF1493", "#32CD32", "#8A2BE2"], bg: "#0D0D0D", text: "#FFFFFF", btn: "#87CEEB" },
+                    { colors: ["#000000", "#FFFFFF", "#FFF8DC", "#00FFFF", "#FF69B4", "#FFFF00", "#32CD32"], bg: "#000000", text: "#FFFFFF", btn: "#00FFFF" }
+                ]
+            },
+            {
+                name: "Brutalist Web Design",
+                class: "brutalist",
+                palettes: [
+                    { colors: ["#FFFFFF", "#000000", "#666666"], bg: "#FFFFFF", text: "#000000", btn: "#666666" },
+                    { colors: ["#FFFFFF", "#000000", "#808080"], bg: "#FFFFFF", text: "#000000", btn: "#808080" },
+                    { colors: ["#FFFFFF", "#000000", "#00FF7F", "#32CD32"], bg: "#FFFFFF", text: "#000000", btn: "#00FF7F" },
+                    { colors: ["#FFFFFF", "#000000", "#40E0D0", "#26A69A", "#2196F3"], bg: "#FFFFFF", text: "#000000", btn: "#40E0D0" },
+                    { colors: ["#FFFFFF", "#000000", "#0000FF", "#FFDAB9", "#FFFF00"], bg: "#FFFFFF", text: "#000000", btn: "#0000FF" },
+                    { colors: ["#FFFFFF", "#000000", "#40E0D0", "#FF4500"], bg: "#FFFFFF", text: "#000000", btn: "#40E0D0" },
+                    { colors: ["#FFFFFF", "#000000", "#FF0000", "#FFFF00", "#0000FF"], bg: "#FFFFFF", text: "#000000", btn: "#FF0000" },
+                    { colors: ["#FFFFFF", "#000000", "#FF1493", "#32CD32", "#00FFFF", "#FF69B4"], bg: "#FFFFFF", text: "#000000", btn: "#FF1493" },
+                    { colors: ["#FFFFFF", "#000000", "#FF1493", "#32CD32", "#0000FF", "#8A2BE2"], bg: "#FFFFFF", text: "#000000", btn: "#FF1493" },
+                    { colors: ["#FFFFFF", "#000000", "#FFF8DC", "#00FFFF", "#FF69B4", "#FFFF00", "#32CD32"], bg: "#FFFFFF", text: "#000000", btn: "#FFF8DC" }
+                ]
+            }
+        ];
+
+        function createColorSwatch(colors) {
+            return colors.map(color => `<div class="color-swatch" style="background: ${color};" title="${color}"></div>`).join('');
+        }
+
+        function createPaletteCell(style, palette, paletteIndex) {
+            const cellClass = style.class;
+            const bgStyle = palette.bg.includes('gradient') ? `background: ${palette.bg};` : `background-color: ${palette.bg};`;
+
+            return `
+                    <td class="palette-cell ${cellClass}" style="${bgStyle} color: ${palette.text};"
+                        onclick="showPaletteDetails('${style.name}', ${paletteIndex})">
+                        <div class="palette-preview">
+                            ${createColorSwatch(palette.colors)}
+                        </div>
+                        <div class="palette-info">
+                            <strong>Bg:</strong> ${palette.bg.length > 20 ? 'Gradient' : palette.bg}<br>
+                            <strong>Text:</strong> ${palette.text}
+                        </div>
+                        <button class="button-demo" style="background: ${palette.btn}; color: ${palette.text};">
+                            Demo Button
+                        </button>
+                    </td>
+                `;
+        }
+
+        function generateMatrix() {
+            const tbody = document.getElementById('matrixBody');
+
+            designStyles.forEach(style => {
+                const row = document.createElement('tr');
+
+                // Style name cell
+                row.innerHTML = `<td class="style-header">${style.name}</td>`;
+
+                // Palette cells
+                style.palettes.forEach((palette, index) => {
+                    row.innerHTML += createPaletteCell(style, palette, index);
+                });
+
+                tbody.appendChild(row);
+            });
+        }
+
+        function showPaletteDetails(styleName, paletteIndex) {
+            const style = designStyles.find(s => s.name === styleName);
+            const palette = style.palettes[paletteIndex];
+            const paletteNames = ['Achromatic', 'Monochromatic', 'Duochromatic', 'Analogous',
+                'Split-Complementary', 'Complementary', 'Triadic', 'Tetradic', 'Square', 'Quintadic'];
+
+            alert(`${styleName} - ${paletteNames[paletteIndex]}\n\nColors: ${palette.colors.join(', ')}\nBackground: ${palette.bg}\nText: ${palette.text}\nButton: ${palette.btn}`);
+        }
+
+        // Add dynamic styling for gradient cells
+        function updateGradientStyles() {
+            const gradientCells = document.querySelectorAll('.gradient-heavy');
+            gradientCells.forEach((cell, index) => {
+                const style = designStyles[6]; // Gradient style
+                const palette = style.palettes[index % style.palettes.length];
+                if (palette.bg.includes('gradient')) {
+                    cell.style.background = palette.bg;
+                }
+            });
+        }
+
+        // Add special effects for neon elements
+        function addNeonEffects() {
+            const neonCells = document.querySelectorAll('.dark-neon');
+            neonCells.forEach(cell => {
+                const button = cell.querySelector('.button-demo');
+                if (button) {
+                    button.style.boxShadow = '0 0 10px currentColor';
+                    button.addEventListener('mouseenter', function () {
+                        this.style.boxShadow = '0 0 20px currentColor, 0 0 30px currentColor';
+                    });
+                    button.addEventListener('mouseleave', function () {
+                        this.style.boxShadow = '0 0 10px currentColor';
+                    });
+                }
+            });
+        }
+
+        // Add glassmorphic blur effects
+        function addGlassmorphicEffects() {
+            const glassCells = document.querySelectorAll('.glassmorphic');
+            glassCells.forEach(cell => {
+                cell.style.backdropFilter = 'blur(10px)';
+                cell.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+            });
+        }
+
+        // Add neumorphic shadow effects
+        function addNeumorphicEffects() {
+            const neumorphicCells = document.querySelectorAll('.neumorphic');
+            neumorphicCells.forEach(cell => {
+                const button = cell.querySelector('.button-demo');
+                if (button) {
+                    button.addEventListener('mousedown', function () {
+                        this.style.boxShadow = 'inset 2px 2px 4px rgba(0,0,0,0.2), inset -2px -2px 4px rgba(255,255,255,0.8)';
+                    });
+                    button.addEventListener('mouseup', function () {
+                        this.style.boxShadow = '4px 4px 8px rgba(0,0,0,0.2), -4px -4px 8px rgba(255,255,255,0.8)';
+                    });
+                }
+            });
+        }
+
+        // Add material design ripple effect
+        function addMaterialRipple() {
+            const materialCells = document.querySelectorAll('.material');
+            materialCells.forEach(cell => {
+                const button = cell.querySelector('.button-demo');
+                if (button) {
+                    button.addEventListener('click', function (e) {
+                        const ripple = document.createElement('div');
+                        const rect = this.getBoundingClientRect();
+                        const size = Math.max(rect.width, rect.height);
+                        const x = e.clientX - rect.left - size / 2;
+                        const y = e.clientY - rect.top - size / 2;
+
+                        ripple.style.width = ripple.style.height = size + 'px';
+                        ripple.style.left = x + 'px';
+                        ripple.style.top = y + 'px';
+                        ripple.style.position = 'absolute';
+                        ripple.style.borderRadius = '50%';
+                        ripple.style.background = 'rgba(255,255,255,0.3)';
+                        ripple.style.transform = 'scale(0)';
+                        ripple.style.animation = 'ripple 0.6s linear';
+                        ripple.style.pointerEvents = 'none';
+
+                        this.style.position = 'relative';
+                        this.style.overflow = 'hidden';
+                        this.appendChild(ripple);
+
+                        setTimeout(() => ripple.remove(), 600);
+                    });
+                }
+            });
+        }
+
+        // Add CSS animation for ripple effect
+        function addRippleAnimation() {
+            const style = document.createElement('style');
+            style.textContent = `
+                    @keyframes ripple {
+                        to {
+                            transform: scale(4);
+                            opacity: 0;
+                        }
+                    }
+
+                    .color-swatch:hover {
+                        transform: scaleY(1.1);
+                        z-index: 1;
+                        position: relative;
+                    }
+
+                    .palette-cell:hover .palette-preview {
+                        transform: translateY(-2px);
+                    }
+
+                    .vaporwave {
+                        background-image:
+                            repeating-linear-gradient(
+                                45deg,
+                                transparent,
+                                transparent 10px,
+                                rgba(255, 255, 255, 0.1) 10px,
+                                rgba(255, 255, 255, 0.1) 20px
+                            ),
+                            repeating-linear-gradient(
+                                -45deg,
+                                transparent,
+                                transparent 10px,
+                                rgba(0, 0, 0, 0.05) 10px,
+                                rgba(0, 0, 0, 0.05) 20px
+                            );
+                    }
+
+                    .dark-neon .button-demo {
+                        border: 1px solid currentColor;
+                        transition: all 0.3s ease;
+                    }
+
+                    .brutalist .button-demo {
+                        border: 2px solid #000;
+                        border-radius: 0;
+                        font-weight: bold;
+                        text-transform: uppercase;
+                        font-size: 0.6em;
+                    }
+
+                    .brutalist .button-demo:hover {
+                        background: #000 !important;
+                        color: #fff !important;
+                    }
+
+                    .pastel .button-demo {
+                        border-radius: 20px;
+                        border: none;
+                        font-weight: 500;
+                    }
+
+                    .gradient-heavy .button-demo {
+                        background: linear-gradient(45deg, var(--btn-start), var(--btn-end)) !important;
+                        border: none;
+                        color: white;
+                        font-weight: 600;
+                    }
+                `;
+            document.head.appendChild(style);
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            generateMatrix();
+            addRippleAnimation();
+
+            // Add a small delay to ensure DOM is fully rendered
+            setTimeout(() => {
+                updateGradientStyles();
+                addNeonEffects();
+                addGlassmorphicEffects();
+                addNeumorphicEffects();
+                addMaterialRipple();
+            }, 100);
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                // Remove any active focus
+                document.activeElement.blur();
+            }
+        });
+
+        // Add accessibility improvements
+        function addAccessibilityFeatures() {
+            const cells = document.querySelectorAll('.palette-cell');
+            cells.forEach((cell, index) => {
+                cell.setAttribute('tabindex', '0');
+                cell.setAttribute('role', 'button');
+                cell.setAttribute('aria-label', `Color palette ${index + 1}`);
+
+                cell.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.click();
+                    }
+                });
+            });
+        }
+
+        // Call accessibility features after DOM load
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(addAccessibilityFeatures, 200);
+        });
+    </script>
+</body>
+</html>
