@@ -33,6 +33,7 @@
             color: white;
             padding: 2rem;
             text-align: center;
+            position: relative;
         }
 
             .header h1 {
@@ -45,6 +46,94 @@
                 opacity: 0.9;
                 font-size: 1rem;
             }
+
+        .help-toggle {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+            .help-toggle:hover {
+                background: rgba(255, 255, 255, 0.3);
+            }
+
+        .guidelines {
+            background: rgba(0, 106, 77, 0.05);
+            border: 2px solid rgba(0, 106, 77, 0.1);
+            margin: 1rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            display: none;
+        }
+
+            .guidelines.show {
+                display: block;
+            }
+
+        .guidelines-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #006A4D;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+            .guidelines-title::before {
+                content: '⌨️';
+                margin-right: 0.5rem;
+            }
+
+        .shortcuts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .shortcut-group {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 106, 77, 0.1);
+        }
+
+            .shortcut-group h4 {
+                color: #006A4D;
+                margin-bottom: 0.75rem;
+                font-size: 0.95rem;
+            }
+
+        .shortcut {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+            .shortcut:last-child {
+                margin-bottom: 0;
+            }
+
+        .key {
+            background: #f8f9fa;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: 600;
+            border: 1px solid #dee2e6;
+            min-width: 60px;
+            text-align: center;
+        }
 
         .content {
             padding: 2rem;
@@ -113,7 +202,26 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            position: relative;
         }
+
+            .lang-btn::after {
+                content: attr(data-key);
+                position: absolute;
+                top: -8px;
+                right: -8px;
+                background: #006A4D;
+                color: white;
+                font-size: 0.7rem;
+                padding: 0.2rem 0.4rem;
+                border-radius: 4px;
+                font-weight: 600;
+            }
+
+            .lang-btn.active::after {
+                background: #ffffff;
+                color: #006A4D;
+            }
 
         .lang-count {
             background: rgba(0, 106, 77, 0.15);
@@ -297,7 +405,21 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            position: relative;
         }
+
+            .btn::after {
+                content: attr(data-key);
+                position: absolute;
+                top: -8px;
+                right: -8px;
+                background: rgba(0, 0, 0, 0.7);
+                color: white;
+                font-size: 0.7rem;
+                padding: 0.2rem 0.4rem;
+                border-radius: 4px;
+                font-weight: 600;
+            }
 
         .btn-primary {
             background: linear-gradient(135deg, #006A4D 0%, #0B3122 100%);
@@ -321,6 +443,17 @@
                 transform: translateY(-2px);
             }
 
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+        }
+
+            .btn-warning:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
+            }
+
         .status {
             text-align: center;
             margin-top: 1rem;
@@ -333,6 +466,12 @@
                 background: #e8f5e8;
                 color: #2d6a2d;
                 border: 1px solid #c3e6c3;
+            }
+
+            .status.paused {
+                background: #fff3cd;
+                color: #856404;
+                border: 1px solid #ffeaa7;
             }
 
         @media (max-width: 768px) {
@@ -348,14 +487,96 @@
                 flex-direction: column;
                 align-items: center;
             }
+
+            .shortcuts-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
+            <button class="help-toggle" onclick="toggleGuidelines()">⌨️ Keyboard Shortcuts</button>
             <h1>Professional Text-to-Speech</h1>
             <p>Advanced natural voice synthesis with multilingual support</p>
+        </div>
+
+        <div id="guidelines" class="guidelines">
+            <div class="guidelines-title">Keyboard Shortcuts Guide</div>
+            <div class="shortcuts-grid">
+                <div class="shortcut-group">
+                    <h4>🎤 Speech Controls</h4>
+                    <div class="shortcut">
+                        <span>Start Speaking</span>
+                        <span class="key">Space</span>
+                    </div>
+                    <div class="shortcut">
+                        <span>Pause/Resume</span>
+                        <span class="key">P</span>
+                    </div>
+                    <div class="shortcut">
+                        <span>Stop Speech</span>
+                        <span class="key">Esc</span>
+                    </div>
+                </div>
+
+                <div class="shortcut-group">
+                    <h4>🌐 Language Selection</h4>
+                    <div class="shortcut">
+                        <span>English</span>
+                        <span class="key">1</span>
+                    </div>
+                    <div class="shortcut">
+                        <span>Japanese</span>
+                        <span class="key">2</span>
+                    </div>
+                    <div class="shortcut">
+                        <span>Vietnamese</span>
+                        <span class="key">3</span>
+                    </div>
+                </div>
+
+                <div class="shortcut-group">
+                    <h4>⚡ Voice Controls</h4>
+                    <div class="shortcut">
+                        <span>Increase Rate</span>
+                        <span class="key">+</span>
+                    </div>
+                    <div class="shortcut">
+                        <span>Decrease Rate</span>
+                        <span class="key">-</span>
+                    </div>
+                    <div class="shortcut">
+                        <span>Increase Pitch</span>
+                        <span class="key">Shift + +</span>
+                    </div>
+                    <div class="shortcut">
+                        <span>Decrease Pitch</span>
+                        <span class="key">Shift + -</span>
+                    </div>
+                </div>
+
+                <div class="shortcut-group">
+                    <h4>📋 General</h4>
+                    <div class="shortcut">
+                        <span>Focus Text Area</span>
+                        <span class="key">T</span>
+                    </div>
+                    <div class="shortcut">
+                        <span>Toggle Help</span>
+                        <span class="key">H</span>
+                    </div>
+                    <div class="shortcut">
+                        <span>Next Voice</span>
+                        <span class="key">↓</span>
+                    </div>
+                    <div class="shortcut">
+                        <span>Previous Voice</span>
+                        <span class="key">↑</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="content">
@@ -367,9 +588,9 @@
             <div class="section">
                 <div class="section-title">Language Selection</div>
                 <div class="language-buttons">
-                    <button class="lang-btn active" data-lang="en-US">🇺🇸 English <span class="lang-count" id="count-en-US"></span></button>
-                    <button class="lang-btn" data-lang="ja-JP">🇯🇵 Japanese <span class="lang-count" id="count-ja-JP"></span></button>
-                    <button class="lang-btn" data-lang="vi-VN">🇻🇳 Vietnamese <span class="lang-count" id="count-vi-VN"></span></button>
+                    <button class="lang-btn active" data-lang="en-US" data-key="1">🇺🇸 English <span class="lang-count" id="count-en-US"></span></button>
+                    <button class="lang-btn" data-lang="ja-JP" data-key="2">🇯🇵 Japanese <span class="lang-count" id="count-ja-JP"></span></button>
+                    <button class="lang-btn" data-lang="vi-VN" data-key="3">🇻🇳 Vietnamese <span class="lang-count" id="count-vi-VN"></span></button>
                 </div>
             </div>
 
@@ -410,10 +631,13 @@
 
             <div class="section">
                 <div class="action-buttons">
-                    <button id="speakBtn" class="btn btn-primary">
+                    <button id="speakBtn" class="btn btn-primary" data-key="Space">
                         <span>🎤</span> Speak Text
                     </button>
-                    <button id="stopBtn" class="btn btn-secondary">
+                    <button id="pauseBtn" class="btn btn-warning" data-key="P">
+                        <span>⏸️</span> Pause
+                    </button>
+                    <button id="stopBtn" class="btn btn-secondary" data-key="Esc">
                         <span>⏹️</span> Stop
                     </button>
                 </div>
@@ -428,6 +652,7 @@
         const textArea = document.getElementById('text');
         const langButtons = document.querySelectorAll('.lang-btn');
         const speakBtn = document.getElementById('speakBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
         const stopBtn = document.getElementById('stopBtn');
         const rateSlider = document.getElementById('rateSlider');
         const pitchSlider = document.getElementById('pitchSlider');
@@ -440,6 +665,122 @@
 
         let voices = [];
         let currentLang = 'en-US';
+        let currentUtterance = null;
+        let isPaused = false;
+
+        // Guidelines toggle
+        function toggleGuidelines() {
+            const guidelines = document.getElementById('guidelines');
+            guidelines.classList.toggle('show');
+        }
+
+        // Keyboard event handlers
+        document.addEventListener('keydown', (e) => {
+            // Prevent keyboard shortcuts when typing in text area
+            if (e.target === textArea) {
+                return;
+            }
+
+            // Prevent default for our custom shortcuts
+            const shortcutKeys = [' ', 'p', 'P', 'Escape', '1', '2', '3', '+', '-', '=', 'h', 'H', 't', 'T', 'ArrowUp', 'ArrowDown'];
+            if (shortcutKeys.includes(e.key) || (e.shiftKey && (e.key === '+' || e.key === '-'))) {
+                e.preventDefault();
+            }
+
+            switch (e.key) {
+                case ' ': // Space - Speak
+                    if (!speakBtn.disabled) {
+                        speakText();
+                    }
+                    break;
+                case 'p':
+                case 'P': // P - Pause/Resume
+                    pauseResumeSpeech();
+                    break;
+                case 'Escape': // Escape - Stop
+                    stopSpeech();
+                    break;
+                case '1': // Language selection
+                    switchLanguage('en-US');
+                    break;
+                case '2':
+                    switchLanguage('ja-JP');
+                    break;
+                case '3':
+                    switchLanguage('vi-VN');
+                    break;
+                case '+':
+                case '=':
+                    if (e.shiftKey) {
+                        // Shift + Plus - Increase pitch
+                        adjustPitch(0.1);
+                    } else {
+                        // Plus - Increase rate
+                        adjustRate(0.1);
+                    }
+                    break;
+                case '-':
+                    if (e.shiftKey) {
+                        // Shift + Minus - Decrease pitch
+                        adjustPitch(-0.1);
+                    } else {
+                        // Minus - Decrease rate
+                        adjustRate(-0.1);
+                    }
+                    break;
+                case 'h':
+                case 'H': // H - Toggle help
+                    toggleGuidelines();
+                    break;
+                case 't':
+                case 'T': // T - Focus text area
+                    textArea.focus();
+                    break;
+                case 'ArrowUp': // Up arrow - Previous voice
+                    changeVoice(-1);
+                    break;
+                case 'ArrowDown': // Down arrow - Next voice
+                    changeVoice(1);
+                    break;
+            }
+        });
+
+        // Helper functions for keyboard controls
+        function switchLanguage(lang) {
+            const targetBtn = document.querySelector(`[data-lang="${lang}"]`);
+            if (targetBtn) {
+                langButtons.forEach(b => b.classList.remove('active'));
+                targetBtn.classList.add('active');
+                currentLang = lang;
+                populateVoices();
+            }
+        }
+
+        function adjustRate(delta) {
+            const newValue = Math.max(0.5, Math.min(2.0, parseFloat(rateSlider.value) + delta));
+            rateSlider.value = newValue;
+            rateValue.textContent = newValue + 'x';
+        }
+
+        function adjustPitch(delta) {
+            const newValue = Math.max(0.5, Math.min(2.0, parseFloat(pitchSlider.value) + delta));
+            pitchSlider.value = newValue;
+            pitchValue.textContent = newValue;
+        }
+
+        function changeVoice(direction) {
+            const currentIndex = parseInt(voiceSelect.value);
+            const options = Array.from(voiceSelect.options);
+            let newIndex = currentIndex + direction;
+
+            if (newIndex < 0) newIndex = options.length - 1;
+            if (newIndex >= options.length) newIndex = 0;
+
+            if (options[newIndex] && !options[newIndex].disabled) {
+                voiceSelect.value = newIndex;
+                updateVoiceInfo();
+            }
+        }
 
         // Voice selection change handler
         voiceSelect.addEventListener('change', updateVoiceInfo);
@@ -569,20 +910,20 @@
             }
         }
 
-        function showStatus(message, isActive = false) {
+        function showStatus(message, type = '') {
             status.textContent = message;
             status.style.display = 'block';
-            status.className = `status ${isActive ? 'speaking' : ''}`;
+            status.className = `status ${type}`;
 
-            if (!isActive) {
+            if (type !== 'speaking' && type !== 'paused') {
                 setTimeout(() => {
                     status.style.display = 'none';
                 }, 3000);
             }
         }
 
-        // Speech synthesis
-        speakBtn.addEventListener('click', () => {
+        // Speech synthesis functions
+        function speakText() {
             const text = textArea.value.trim();
             if (!text) {
                 showStatus('⚠️ Please enter some text first.');
@@ -597,42 +938,73 @@
 
             // Stop any ongoing speech
             synth.cancel();
+            isPaused = false;
 
-            const utterance = new SpeechSynthesisUtterance(text);
+            currentUtterance = new SpeechSynthesisUtterance(text);
             const chosenVoice = voices[selectedIndex];
 
             if (chosenVoice) {
-                utterance.voice = chosenVoice;
+                currentUtterance.voice = chosenVoice;
             }
 
             // Apply rate and pitch settings
-            utterance.rate = parseFloat(rateSlider.value);
-            utterance.pitch = parseFloat(pitchSlider.value);
+            currentUtterance.rate = parseFloat(rateSlider.value);
+            currentUtterance.pitch = parseFloat(pitchSlider.value);
 
             // Event handlers
-            utterance.onstart = () => {
-                showStatus('🎤 Speaking...', true);
+            currentUtterance.onstart = () => {
+                showStatus('🎤 Speaking...', 'speaking');
                 speakBtn.disabled = true;
+                pauseBtn.disabled = false;
+                pauseBtn.innerHTML = '<span>⏸️</span> Pause';
             };
 
-            utterance.onend = () => {
+            currentUtterance.onend = () => {
                 showStatus('✅ Speech completed.');
                 speakBtn.disabled = false;
+                pauseBtn.disabled = true;
+                isPaused = false;
             };
 
-            utterance.onerror = (event) => {
+            currentUtterance.onerror = (event) => {
                 showStatus(`❌ Error: ${event.error}`);
                 speakBtn.disabled = false;
+                pauseBtn.disabled = true;
+                isPaused = false;
             };
 
-            synth.speak(utterance);
-        });
+            synth.speak(currentUtterance);
+        }
 
-        stopBtn.addEventListener('click', () => {
+        function pauseResumeSpeech() {
+            if (synth.speaking) {
+                if (isPaused) {
+                    synth.resume();
+                    showStatus('▶️ Speech resumed.', 'speaking');
+                    pauseBtn.innerHTML = '<span>⏸️</span> Pause';
+                    isPaused = false;
+                } else {
+                    synth.pause();
+                    showStatus('⏸️ Speech paused.', 'paused');
+                    pauseBtn.innerHTML = '<span>▶️</span> Resume';
+                    isPaused = true;
+                }
+            }
+        }
+
+        function stopSpeech() {
             synth.cancel();
             showStatus('⏹️ Speech stopped.');
             speakBtn.disabled = false;
-        });
+            pauseBtn.disabled = true;
+            pauseBtn.innerHTML = '<span>⏸️</span> Pause';
+            isPaused = false;
+        }
+
+        // Button event listeners
+        speakBtn.addEventListener('click', speakText);
+        pauseBtn.addEventListener('click', pauseResumeSpeech);
+        stopBtn.addEventListener('click', stopSpeech);
 
         // Initialize voices
         populateVoices();
@@ -646,8 +1018,10 @@
         if (!('speechSynthesis' in window)) {
             showStatus('❌ Speech synthesis not supported in this browser.');
             speakBtn.disabled = true;
+            pauseBtn.disabled = true;
         } else {
-            // Initial language count update
+            // Initial setup
+            pauseBtn.disabled = true;
             setTimeout(updateLanguageCounts, 100);
         }
     </script>
