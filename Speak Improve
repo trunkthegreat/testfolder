@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spoken English Review</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #A8E063, #56AB2F);
+            --secondary-gradient: linear-gradient(145deg, #7CB342, #4A90E2);
+            --accent-green: #56AB2F;
+            --light-green: #A8E063;
+            --soft-green: #E8F5E8;
+            --dark-green: #2D5016;
+            --text-primary: #2C3E50;
+            --text-secondary: #7F8C8D;
+            --bg-primary: #FAFBFC;
+            --bg-secondary: #FFFFFF;
+            --shadow: 0 4px 12px rgba(86, 171, 47, 0.15);
+            --shadow-hover: 0 8px 24px rgba(86, 171, 47, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Graph-inspired background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 20%, rgba(168, 224, 99, 0.1) 0%, transparent 20%),
+                        radial-gradient(circle at 80% 80%, rgba(86, 171, 47, 0.1) 0%, transparent 20%),
+                        radial-gradient(circle at 40% 70%, rgba(168, 224, 99, 0.05) 0%, transparent 30%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(4px);
+        }
+
+        .loading-content {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--soft-green);
+            border-top: 4px solid var(--accent-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 320px;
+            background: var(--bg-secondary);
+            border-right: 1px solid rgba(86, 171, 47, 0.1);
+            box-shadow: var(--shadow);
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 2rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: scale(1.5);
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .sidebar-header p {
+            opacity: 0.9;
+            font-size: 0.875rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .sidebar-content {
+            padding: 1.5rem;
+        }
+
+        /* Search and controls */
+        .search-section {
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid rgba(86, 171, 47, 0.2);
+            border-radius: 12px;
+            background: var(--soft-green);
+            transition: all 0.3s ease;
+            font-family: inherit;
+            margin-bottom: 1rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 3px rgba(86, 171, 47, 0.1);
+            background: white;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .button-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .button-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .button-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 2px solid rgba(86, 171, 47, 0.2);
+        }
+
+        .button-secondary:hover {
+            background: var(--soft-green);
+            border-color: var(--accent-green);
+        }
+
+        /* Database section */
+        .db-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--soft-green);
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-green);
+        }
+
+        .db-section h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--accent-green);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .db-status {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .file-input-button {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-input-button input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .main-header {
+            background: var(--bg-secondary);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(86, 171, 47, 0.1);
+            box-shadow: 0 2px 8px rgba(86, 171, 47, 0.05);
+        }
+
+        .main-header h2 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Record list */
+        .records-grid {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        }
+
+        .record-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .record-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .record-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .record-timestamp {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            background: var(--soft-green);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .record-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .icon-button {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            background: var(--soft-green);
+            color: var(--accent-green);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+        }
+
+        .icon-button:hover {
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .text-section {
+            margin-bottom: 1rem;
+        }
+
+        .text-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-green);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .text-content {
+            background: var(--soft-green);
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            border-left: 3px solid var(--accent-green);
+        }
+
+        .attachment-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-hover);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(86, 171, 47, 0.1);
+        }
+
+        .modal-header h3 {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close-button:hover {
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-group textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 1rem;
+            border: 2px solid rgba(86, 171, 47, 0.2);
+            border-radius: 12px;
+            background: var(--soft-green);
+            font-family: inherit;
+            font-size: 0.875rem;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(86, 171, 47, 0.1);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+            background: var(--soft-green);
+            border: 2px dashed rgba(86, 171, 47, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .file-input-wrapper:hover {
+            border-color: var(--accent-green);
+            background: rgba(168, 224, 99, 0.2);
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .audio-player {
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 100;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .records-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content-area {
+                padding: 1rem;
+            }
+
+            .main-header {
+                padding: 1rem;
+            }
+        }
+
+        /* Highlight matching text */
+        .highlight {
+            background: linear-gradient(120deg, #A8E063 0%, #A8E063 100%);
+            background-repeat: no-repeat;
+            background-size: 100% 40%;
+            background-position: 0 85%;
+            font-weight: 500;
+        }
+
+        .success-message {
+            background: var(--soft-green);
+            color: var(--dark-green);
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent-green);
+            font-size: 0.875rem;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #e53935;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>Initializing Database...</h3>
+            <p>Setting up SQLite for your records</p>
+        </div>
+    </div>
+
+    <div class="app-container" style="display: none;" id="appContainer">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>📚 Review Hub</h1>
+                <p>SQLite-powered spoken English practice</p>
+            </div>
+            <div class="sidebar-content">
+                <!-- Database Management Section -->
+                <div class="db-section">
+                    <h3>🗄️ Database</h3>
+                    <div class="db-status" id="dbStatus">Ready • 0 records</div>
+                    
+                    <div class="file-input-button">
+                        <input type="file" id="dbFileInput" accept=".db,.sqlite,.sqlite3">
+                        <button class="button button-secondary" onclick="document.getElementById('dbFileInput').click()">
+                            📁 Load Database
+                        </button>
+                    </div>
+                    
+                    <button class="button button-secondary" id="saveDbBtn">
+                        💾 Save Database
+                    </button>
+                    
+                    <button class="button button-secondary" id="newDbBtn">
+                        🆕 New Database
+                    </button>
+                </div>
+
+                <div class="search-section">
+                    <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search records...">
+                </div>
+                
+                <div class="controls">
+                    <button class="button button-primary" id="addRecordBtn">
+                        ➕ Add Record
+                    </button>
+                    <button class="button button-secondary" id="sortByDateBtn">
+                        📅 Sort by Date
+                    </button>
+                    <button class="button button-secondary" id="sortByAlphaBtn">
+                        🔤 Sort A-Z
+                    </button>
+                    <button class="button button-secondary" id="reviewModeBtn">
+                        👁️ Review Mode
+                    </button>
+                    <button class="button button-secondary" id="exportJsonBtn">
+                        📤 Export JSON
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <h2>Records Dashboard</h2>
+                <div class="stats">
+                    <span id="totalRecords">0 records</span>
+                    <span id="filterStatus">All records</span>
+                    <span id="dbSize">Database size: 0 KB</span>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div id="messageArea"></div>
+                
+                <div class="records-grid" id="recordsGrid">
+                    <!-- Records will be inserted here -->
+                </div>
+                
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <svg fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <h3>No records found</h3>
+                    <p>Start by adding your first spoken English record!</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Record Modal -->
+    <div class="modal" id="recordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Record</h3>
+                <button class="close-button" id="closeModal">&times;</button>
+            </div>
+            
+            <form id="recordForm">
+                <div class="form-group">
+                    <label for="rawText">Raw Text (Original Speech)</label>
+                    <textarea id="rawText" placeholder="Enter the original spoken text..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="polishedText">Polished Text (Corrected Version)</label>
+                    <textarea id="polishedText" placeholder="Enter the polished/corrected text..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Audio Attachment (Optional)</label>
+                    <div class="file-input-wrapper" id="fileWrapper">
+                        <input type="file" id="audioFile" accept="audio/*">
+                        <div id="fileLabel">
+                            🎵 Click to upload audio file<br>
+                            <small>Supports MP3, WAV, M4A, etc.</small>
+                        </div>
+                    </div>
+                    <audio id="audioPreview" class="audio-player" controls style="display: none;"></audio>
+                </div>
+                
+                <div class="controls">
+                    <button type="submit" class="button button-primary">💾 Save Record</button>
+                    <button type="button" class="button button-secondary" id="cancelModal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Load sql.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    
+    <script>
+        // SQLite Database Service
+        class SQLiteService {
+            constructor() {
+                this.db = null;
+                this.SQL = null;
+                this.dbData = null;
+            }
+
+            async initialize() {
+                try {
+                    // Initialize sql.js
+                    this.SQL = await initSqlJs({
+                        locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+                    });
+                    
+                    // Create new database or load existing
+                    await this.createNewDatabase();
+                    return true;
+                } catch (error) {
+                    console.error('Failed to initialize SQLite:', error);
+                    throw new Error('Database initialization failed');
+                }
+            }
+
+            async createNewDatabase() {
+                // Create new empty database
+                this.db = new this.SQL.Database();
+                
+                // Create tables
+                this.db.run(`
+                    CREATE TABLE IF NOT EXISTS records (
+                        id TEXT PRIMARY KEY,
+                        raw_text TEXT NOT NULL,
+                        polished_text TEXT,
+                        timestamp TEXT NOT NULL,
+                        attachment_filename TEXT,
+                        review_count INTEGER DEFAULT 0,
+                        last_reviewed TEXT,
+                        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+                    )
+                `);
+
+                // Create indexes for better search performance
+                this.db.run(`CREATE INDEX IF NOT EXISTS idx_timestamp ON records(timestamp)`);
+                this.db.run(`CREATE INDEX IF NOT EXISTS idx_review_count ON records(review_count)`);
+                this.db.run(`CREATE INDEX IF NOT EXISTS idx_raw_text ON records(raw_text)`);
+                
+                console.log('New SQLite database created with schema');
+            }
+
+            async loadDatabaseFromFile(file) {
+                try {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const uint8Array = new Uint8Array(arrayBuffer);
+                    this.db = new this.SQL.Database(uint8Array);
+                    console.log('Database loaded from file:', file.name);
+                    return true;
+                } catch (error) {
+                    console.error('Failed to load database:', error);
+                    throw new Error('Invalid database file');
+                }
+            }
+
+            saveDatabase() {
+                try {
+                    const data = this.db.export();
+                    const blob = new Blob([data], { type: 'application/x-sqlite3' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `spoken-english-${new Date().toISOString().split('T')[0]}.db`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                    return true;
+                } catch (error) {
+                    console.error('Failed to save database:', error);
+                    throw new Error('Failed to save database');
+                }
+            }
+
+            addRecord(record) {
+                try {
+                    const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+                    const timestamp = new Date().toISOString();
+                    
+                    const stmt = this.db.prepare(`
+                        INSERT INTO records (id, raw_text, polished_text, timestamp, attachment_filename, review_count, last_reviewed)
+                        VALUES (?, ?, ?, ?, ?, 0, NULL)
+                    `);
+                    
+                    stmt.run([
+                        id,
+                        record.rawText,
+                        record.polishedText || null,
+                        timestamp,
+                        record.attachmentFilename || null
+                    ]);
+                    
+                    stmt.free();
+                    
+                    return {
+                        id,
+                        rawText: record.rawText,
+                        polishedText: record.polishedText,
+                        timestamp,
+                        attachmentFilename: record.attachmentFilename,
+                        reviewCount: 0,
+                        lastReviewed: null
+                    };
+                } catch (error) {
+                    console.error('Failed to add record:', error);
+                    throw new Error('Failed to add record');
+                }
+            }
+
+            updateRecord(id, updates) {
+                try {
+                    const setClauses = [];
+                    const values = [];
+                    
+                    if (updates.rawText !== undefined) {
+                        setClauses.push('raw_text = ?');
+                        values.push(updates.rawText);
+                    }
+                    if (updates.polishedText !== undefined) {
+                        setClauses.push('polished_text = ?');
+                        values.push(updates.polishedText);
+                    }
+                    if (updates.attachmentFilename !== undefined) {
+                        setClauses.push('attachment_filename = ?');
+                        values.push(updates.attachmentFilename);
+                    }
+                    
+                    if (setClauses.length === 0) return null;
+                    
+                    values.push(id);
+                    
+                    const stmt = this.db.prepare(`
+                        UPDATE records SET ${setClauses.join(', ')} WHERE id = ?
+                    `);
+                    
+                    stmt.run(values);
+                    stmt.free();
+                    
+                    return this.getRecord(id);
+                } catch (error) {
+                    console.error('Failed to update record:', error);
+                    throw new Error('Failed to update record');
+                }
+            }
+
+            deleteRecord(id) {
+                try {
+                    const stmt = this.db.prepare('DELETE FROM records WHERE id = ?');
+                    stmt.run([id]);
+                    stmt.free();
+                    return true;
+                } catch (error) {
+                    console.error('Failed to delete record:', error);
+                    throw new Error('Failed to delete record');
+                }
+            }
+
+            getRecord(id) {
+                try {
+                    const stmt = this.db.prepare('SELECT * FROM records WHERE id = ?');
+                    const result = stmt.get([id]);
+                    stmt.free();
+                    
+                    if (!result) return null;
+                    
+                    return this.transformRecord(result);
+                } catch (error) {
+                    console.error('Failed to get record:', error);
+                    return null;
+                }
+            }
+
+            getAllRecords() {
+                try {
+                    const stmt = this.db.prepare(`
+                        SELECT * FROM records 
+                        ORDER BY timestamp DESC
+                    `);
+                    const results = stmt.all();
+                    stmt.free();
+                    
+                    return results.map(record => this.transformRecord(record));
+                } catch (error) {
+                    console.error('Failed to get records:', error);
+                    return [];
+                }
+            }
+
+            searchRecords(query) {
+                try {
+                    const searchTerm = `%${query}%`;
+                    const stmt = this.db.prepare(`
+                        SELECT * FROM records 
+                        WHERE raw_text LIKE ? OR polished_text LIKE ?
+                        ORDER BY timestamp DESC
+                    `);
+                    const results = stmt.all([searchTerm, searchTerm]);
+                    stmt.free();
+                    
+                    return results.map(record => this.transformRecord(record));
+                } catch (error) {
+                    console.error('Failed to search records:', error);
+                    return [];
+                }
+            }
+
+            markAsReviewed(id) {
+                try {
+                    const stmt = this.db.prepare(`
+                        UPDATE records 
+                        SET review_count = review_count + 1, last_reviewed = ? 
+                        WHERE id = ?
+                    `);
+                    stmt.run([new Date().toISOString(), id]);
+                    stmt.free();
+                    return true;
+                } catch (error) {
+                    console.error('Failed to mark as reviewed:', error);
+                    return false;
+                }
+            }
+
+            getStats() {
+                try {
+                    const countStmt = this.db.prepare('SELECT COUNT(*) as count FROM records');
+                    const countResult = countStmt.get();
+                    countStmt.free();
+                    
+                    const sizeStmt = this.db.prepare("SELECT page_count * page_size as size FROM pragma_page_count(), pragma_page_size()");
+                    const sizeResult = sizeStmt.get();
+                    sizeStmt.free();
+                    
+                    return {
+                        recordCount: countResult.count || 0,
+                        databaseSize: sizeResult.size || 0
+                    };
+                } catch (error) {
+                    console.error('Failed to get stats:', error);
+                    return { recordCount: 0, databaseSize: 0 };
+                }
+            }
+
+            exportToJSON() {
+                try {
+                    const records = this.getAllRecords();
+                    const exportData = {
+                        exportDate: new Date().toISOString(),
+                        version: '1.0',
+                        records: records
+                    };
+                    
+                    const dataStr = JSON.stringify(exportData, null, 2);
+                    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                    const url = URL.createObjectURL(dataBlob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `spoken-english-export-${new Date().toISOString().split('T')[0]}.json`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Failed to export JSON:', error);
+                    throw new Error('Failed to export data');
+                }
+            }
+
+            transformRecord(dbRecord) {
+                return {
+                    id: dbRecord.id,
+                    rawText: dbRecord.raw_text,
+                    polishedText: dbRecord.polished_text,
+                    timestamp: dbRecord.timestamp,
+                    attachmentFilename: dbRecord.attachment_filename,
+                    reviewCount: dbRecord.review_count || 0,
+                    lastReviewed: dbRecord.last_reviewed
+                };
+            }
+        }
+
+        // Search and Filter Service
+        class SearchService {
+            static fuzzySearch(text, query) {
+                if (!query) return true;
+                
+                const textLower = text.toLowerCase();
+                const queryLower = query.toLowerCase();
+                
+                // Simple fuzzy matching
+                let textIndex = 0;
+                let queryIndex = 0;
+                
+                while (textIndex < textLower.length && queryIndex < queryLower.length) {
+                    if (textLower[textIndex] === queryLower[queryIndex]) {
+                        queryIndex++;
+                    }
+                    textIndex++;
+                }
+                
+                return queryIndex === queryLower.length;
+            }
+
+            static highlightMatches(text, query) {
+                if (!query) return text;
+                
+                const regex = new RegExp(`(${query.split('').map(char => 
+                    char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+                ).join('.*?')})`, 'gi');
+                return text.replace(regex, '<span class="highlight">$1</span>');
+            }
+
+            static sortRecords(records, method) {
+                const sorted = [...records];
+                
+                switch (method) {
+                    case 'date':
+                        return sorted.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    case 'alpha':
+                        return sorted.sort((a, b) => a.rawText.localeCompare(b.rawText));
+                    case 'review':
+                        return sorted.sort((a, b) => (a.reviewCount || 0) - (b.reviewCount || 0));
+                    default:
+                        return sorted;
+                }
+            }
+        }
+
+        // UI Controller
+        class UIController {
+            constructor(dbService) {
+                this.dbService = dbService;
+                this.currentQuery = '';
+                this.currentSort = 'date';
+                this.isReviewMode = false;
+                
+                this.initializeElements();
+                this.bindEvents();
+                this.render();
+            }
+
+            initializeElements() {
+                this.searchInput = document.getElementById('searchInput');
+                this.recordsGrid = document.getElementById('recordsGrid');
+                this.emptyState = document.getElementById('emptyState');
+                this.totalRecords = document.getElementById('totalRecords');
+                this.filterStatus = document.getElementById('filterStatus');
+                this.dbStatus = document.getElementById('dbStatus');
+                this.dbSize = document.getElementById('dbSize');
+                this.messageArea = document.getElementById('messageArea');
+                this.modal = document.getElementById('recordModal');
+                this.recordForm = document.getElementById('recordForm');
+                this.modalTitle = document.getElementById('modalTitle');
+                this.rawTextInput = document.getElementById('rawText');
+                this.polishedTextInput = document.getElementById('polishedText');
+                this.audioFile = document.getElementById('audioFile');
+                this.audioPreview = document.getElementById('audioPreview');
+                this.fileLabel = document.getElementById('fileLabel');
+                this.dbFileInput = document.getElementById('dbFileInput');
+            }
+
+            bindEvents() {
+                // Search
+                this.searchInput.addEventListener('input', (e) => {
+                    this.currentQuery = e.target.value;
+                    this.render();
+                });
+
+                // Control buttons
+                document.getElementById('addRecordBtn').addEventListener('click', () => this.openModal());
+                document.getElementById('sortByDateBtn').addEventListener('click', () => this.setSortMethod('date'));
+                document.getElementById('sortByAlphaBtn').addEventListener('click', () => this.setSortMethod('alpha'));
+                document.getElementById('reviewModeBtn').addEventListener('click', () => this.toggleReviewMode());
+                document.getElementById('exportJsonBtn').addEventListener('click', () => this.exportJSON());
+
+                // Database buttons
+                document.getElementById('saveDbBtn').addEventListener('click', () => this.saveDatabase());
+                document.getElementById('newDbBtn').addEventListener('click', () => this.createNewDatabase());
+                this.dbFileInput.addEventListener('change', (e) => this.loadDatabase(e));
+
+                // Modal
+                document.getElementById('closeModal').addEventListener('click', () => this.closeModal());
+                document.getElementById('cancelModal').addEventListener('click', () => this.closeModal());
+                this.modal.addEventListener('click', (e) => {
+                    if (e.target === this.modal) this.closeModal();
+                });
+
+                // Form
+                this.recordForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
+                this.audioFile.addEventListener('change', (e) => this.handleFileChange(e));
+                document.getElementById('fileWrapper').addEventListener('click', () => this.audioFile.click());
+            }
+
+            showMessage(message, type = 'success') {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
+                messageDiv.textContent = message;
+                
+                this.messageArea.innerHTML = '';
+                this.messageArea.appendChild(messageDiv);
+                
+                setTimeout(() => {
+                    messageDiv.remove();
+                }, 5000);
+            }
+
+            async saveDatabase() {
+                try {
+                    this.dbService.saveDatabase();
+                    this.showMessage('Database saved successfully!');
+                } catch (error) {
+                    this.showMessage('Failed to save database: ' + error.message, 'error');
+                }
+            }
+
+            async createNewDatabase() {
+                if (confirm('Create a new database? This will clear all current data.')) {
+                    try {
+                        await this.dbService.createNewDatabase();
+                        this.render();
+                        this.showMessage('New database created successfully!');
+                    } catch (error) {
+                        this.showMessage('Failed to create new database: ' + error.message, 'error');
+                    }
+                }
+            }
+
+            async loadDatabase(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                try {
+                    await this.dbService.loadDatabaseFromFile(file);
+                    this.render();
+                    this.showMessage(`Database loaded: ${file.name}`);
+                } catch (error) {
+                    this.showMessage('Failed to load database: ' + error.message, 'error');
+                }
+            }
+
+            async exportJSON() {
+                try {
+                    this.dbService.exportToJSON();
+                    this.showMessage('Data exported successfully!');
+                } catch (error) {
+                    this.showMessage('Failed to export data: ' + error.message, 'error');
+                }
+            }
+
+            setSortMethod(method) {
+                this.currentSort = method;
+                this.render();
+            }
+
+            toggleReviewMode() {
+                this.isReviewMode = !this.isReviewMode;
+                if (this.isReviewMode) {
+                    this.currentSort = 'review';
+                }
+                this.render();
+            }
+
+            openModal(recordId = null) {
+                this.currentRecordId = recordId;
+                this.modalTitle.textContent = recordId ? 'Edit Record' : 'Add New Record';
+                
+                if (recordId) {
+                    const record = this.dbService.getRecord(recordId);
+                    if (record) {
+                        this.rawTextInput.value = record.rawText;
+                        this.polishedTextInput.value = record.polishedText || '';
+                    }
+                } else {
+                    this.recordForm.reset();
+                    this.audioPreview.style.display = 'none';
+                }
+                
+                this.modal.classList.add('active');
+            }
+
+            closeModal() {
+                this.modal.classList.remove('active');
+                this.currentRecordId = null;
+                this.recordForm.reset();
+                this.audioPreview.style.display = 'none';
+            }
+
+            async handleFormSubmit(e) {
+                e.preventDefault();
+                
+                try {
+                    const recordData = {
+                        rawText: this.rawTextInput.value.trim(),
+                        polishedText: this.polishedTextInput.value.trim(),
+                    };
+
+                    if (this.audioFile.files[0]) {
+                        recordData.attachmentFilename = this.audioFile.files[0].name;
+                    }
+
+                    if (this.currentRecordId) {
+                        this.dbService.updateRecord(this.currentRecordId, recordData);
+                        this.showMessage('Record updated successfully!');
+                    } else {
+                        this.dbService.addRecord(recordData);
+                        this.showMessage('Record added successfully!');
+                    }
+
+                    this.closeModal();
+                    this.render();
+                } catch (error) {
+                    this.showMessage('Failed to save record: ' + error.message, 'error');
+                }
+            }
+
+            handleFileChange(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    this.fileLabel.innerHTML = `🎵 ${file.name}<br><small>File selected</small>`;
+                    
+                    const url = URL.createObjectURL(file);
+                    this.audioPreview.src = url;
+                    this.audioPreview.style.display = 'block';
+                } else {
+                    this.fileLabel.innerHTML = '🎵 Click to upload audio file<br><small>Supports MP3, WAV, M4A, etc.</small>';
+                    this.audioPreview.style.display = 'none';
+                }
+            }
+
+            render() {
+                // Get records based on current query
+                let records;
+                if (this.currentQuery) {
+                    records = this.dbService.searchRecords(this.currentQuery);
+                } else {
+                    records = this.dbService.getAllRecords();
+                }
+                
+                // Apply sorting
+                records = SearchService.sortRecords(records, this.currentSort);
+                
+                // Update stats
+                const stats = this.dbService.getStats();
+                this.totalRecords.textContent = `${records.length} record${records.length !== 1 ? 's' : ''}`;
+                this.filterStatus.textContent = this.currentQuery ? 
+                    `Filtered by "${this.currentQuery}"` : 
+                    `${this.isReviewMode ? 'Review mode' : 'All records'}`;
+                    
+                this.dbStatus.textContent = `Ready • ${stats.recordCount} records`;
+                this.dbSize.textContent = `Database size: ${Math.round(stats.databaseSize / 1024)} KB`;
+
+                // Render records
+                if (records.length === 0) {
+                    this.recordsGrid.style.display = 'none';
+                    this.emptyState.style.display = 'block';
+                } else {
+                    this.recordsGrid.style.display = 'grid';
+                    this.emptyState.style.display = 'none';
+                    
+                    this.recordsGrid.innerHTML = records.map(record => this.renderRecord(record)).join('');
+                    this.bindRecordActions();
+                }
+            }
+
+            renderRecord(record) {
+                const date = new Date(record.timestamp).toLocaleDateString();
+                const rawText = SearchService.highlightMatches(record.rawText, this.currentQuery);
+                const polishedText = SearchService.highlightMatches(record.polishedText || '', this.currentQuery);
+                const reviewBadge = record.reviewCount ? `Reviewed ${record.reviewCount}x` : 'Not reviewed';
+                
+                return `
+                    <div class="record-card" data-id="${record.id}">
+                        <div class="record-header">
+                            <span class="record-timestamp">${date}</span>
+                            <div class="record-actions">
+                                <button class="icon-button edit-btn" data-id="${record.id}" title="Edit">✏️</button>
+                                <button class="icon-button review-btn" data-id="${record.id}" title="Mark as Reviewed">👁️</button>
+                                <button class="icon-button delete-btn" data-id="${record.id}" title="Delete">🗑️</button>
+                            </div>
+                        </div>
+                        
+                        <div class="text-section">
+                            <span class="text-label">Raw Text</span>
+                            <div class="text-content">${rawText}</div>
+                        </div>
+                        
+                        ${record.polishedText ? `
+                            <div class="text-section">
+                                <span class="text-label">Polished Text</span>
+                                <div class="text-content">${polishedText}</div>
+                            </div>
+                        ` : ''}
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                            <span class="attachment-indicator">
+                                ${record.attachmentFilename ? `🎵 ${record.attachmentFilename}` : ''}
+                            </span>
+                            <span style="font-size: 0.75rem; color: var(--text-secondary);">${reviewBadge}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            bindRecordActions() {
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.openModal(btn.dataset.id);
+                    });
+                });
+
+                document.querySelectorAll('.review-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.dbService.markAsReviewed(btn.dataset.id);
+                        this.render();
+                        this.showMessage('Record marked as reviewed!');
+                    });
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        if (confirm('Are you sure you want to delete this record?')) {
+                            try {
+                                this.dbService.deleteRecord(btn.dataset.id);
+                                this.render();
+                                this.showMessage('Record deleted successfully!');
+                            } catch (error) {
+                                this.showMessage('Failed to delete record: ' + error.message, 'error');
+                            }
+                        }
+                    });
+                });
+            }
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', async () => {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const appContainer = document.getElementById('appContainer');
+            
+            try {
+                // Initialize SQLite service
+                const dbService = new SQLiteService();
+                await dbService.initialize();
+                
+                // Initialize UI
+                const uiController = new UIController(dbService);
+                
+                // Hide loading overlay and show app
+                loadingOverlay.style.display = 'none';
+                appContainer.style.display = 'flex';
+                
+                console.log('📚 SQLite-powered Spoken English Review App initialized');
+                
+            } catch (error) {
+                console.error('Failed to initialize app:', error);
+                loadingOverlay.innerHTML = `
+                    <div class="loading-content">
+                        <h3 style="color: #c62828;">Initialization Failed</h3>
+                        <p>Could not load SQLite database: ${error.message}</p>
+                        <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #56AB2F; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            Retry
+                        </button>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
