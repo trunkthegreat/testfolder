@@ -89,7 +89,7 @@
         }
 
             .guidelines-title::before {
-                content: '⌨️';
+                content: ⌨️';
                 margin-right: 0.5rem;
             }
 
@@ -179,6 +179,61 @@
                 border-color: #006A4D;
                 box-shadow: 0 0 0 3px rgba(0, 106, 77, 0.1);
             }
+
+        .preview-section {
+            margin-top: 1rem;
+        }
+
+        .preview-container {
+            background: #f8fafb;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            padding: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .preview-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .preview-text {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: #495057;
+            white-space: pre-wrap;
+        }
+
+        .processing-options {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: #006A4D;
+        }
+
+        .checkbox-label {
+            font-size: 0.9rem;
+            color: #495057;
+            cursor: pointer;
+        }
 
         .language-buttons {
             display: flex;
@@ -491,6 +546,11 @@
             .shortcuts-grid {
                 grid-template-columns: 1fr;
             }
+
+            .processing-options {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
         }
     </style>
 </head>
@@ -499,7 +559,7 @@
         <div class="header">
             <button class="help-toggle" onclick="toggleGuidelines()">⌨️ Keyboard Shortcuts</button>
             <h1>Professional Text-to-Speech</h1>
-            <p>Advanced natural voice synthesis with multilingual support</p>
+            <p>Advanced natural voice synthesis with markdown processing and speech enhancement</p>
         </div>
 
         <div id="guidelines" class="guidelines">
@@ -582,7 +642,38 @@
         <div class="content">
             <div class="section">
                 <div class="section-title">Text Input</div>
-                <textarea id="text" class="text-input" placeholder="Enter your text here... The application will convert it to natural speech using advanced voice synthesis.">Hello! This is a professional text-to-speech application with natural voice synthesis.</textarea>
+                <textarea id="text" class="text-input" placeholder="Enter your text here... Supports markdown formatting that will be automatically processed for natural speech synthesis.">Hello! This is a **professional** text-to-speech application with *natural* voice synthesis.
+
+## Features
+- Automatic markdown removal
+- Smart speech enhancement
+- Multiple language support
+- Professional voice quality</textarea>
+                
+                <div class="processing-options">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="removeMarkdown" class="checkbox" checked>
+                        <label for="removeMarkdown" class="checkbox-label">Auto-remove markdown</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="enhanceSSML" class="checkbox" checked>
+                        <label for="enhanceSSML" class="checkbox-label">Enhance for speech</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="showPreview" class="checkbox" checked>
+                        <label for="showPreview" class="checkbox-label">Show processed preview</label>
+                    </div>
+                </div>
+
+                <div id="previewSection" class="preview-section">
+                    <div class="preview-container">
+                        <div class="preview-title">
+                            <span>🔄</span>
+                            <span>Processed Text Preview</span>
+                        </div>
+                        <div id="previewText" class="preview-text"></div>
+                    </div>
+                </div>
             </div>
 
             <div class="section">
@@ -650,6 +741,11 @@
         const synth = window.speechSynthesis;
         const voiceSelect = document.getElementById('voiceSelect');
         const textArea = document.getElementById('text');
+        const previewText = document.getElementById('previewText');
+        const previewSection = document.getElementById('previewSection');
+        const removeMarkdownCheckbox = document.getElementById('removeMarkdown');
+        const enhanceSSMLCheckbox = document.getElementById('enhanceSSML');
+        const showPreviewCheckbox = document.getElementById('showPreview');
         const langButtons = document.querySelectorAll('.lang-btn');
         const speakBtn = document.getElementById('speakBtn');
         const pauseBtn = document.getElementById('pauseBtn');
@@ -667,6 +763,109 @@
         let currentLang = 'en-US';
         let currentUtterance = null;
         let isPaused = false;
+
+        // Markdown removal function
+        function removeMarkdown(text) {
+            return text
+                // Remove code blocks
+                .replace(/```[\s\S]*?```/g, '')
+                .replace(/`([^`]*)`/g, '$1')
+                // Remove headers
+                .replace(/^#{1,6}\s+/gm, '')
+                // Remove bold and italic
+                .replace(/\*\*([^*]+)\*\*/g, '$1')
+                .replace(/\*([^*]+)\*/g, '$1')
+                .replace(/__([^_]+)__/g, '$1')
+                .replace(/_([^_]+)_/g, '$1')
+                // Remove strikethrough
+                .replace(/~~([^~]+)~~/g, '$1')
+                // Remove links
+                .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+                .replace(/\[([^\]]+)\]\[[^\]]+\]/g, '$1')
+                // Remove images
+                .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')
+                // Remove horizontal rules
+                .replace(/^[-*_]{3,}$/gm, '')
+                // Remove blockquotes
+                .replace(/^>\s+/gm, '')
+                // Remove list markers
+                .replace(/^[\s]*[-*+]\s+/gm, '')
+                .replace(/^[\s]*\d+\.\s+/gm, '')
+                // Remove extra whitespace
+                .replace(/\n{3,}/g, '\n\n')
+                .trim();
+        }
+
+        // Smart text enhancement for better speech synthesis
+        function enhanceForSpeech(text) {
+            return text
+                // Add natural pauses by duplicating punctuation (which creates longer pauses)
+                .replace(/\./g, '...')
+                .replace(/!/g, '!!!')
+                .replace(/\?/g, '???')
+                // Add pauses after colons and semicolons
+                .replace(/:/g, ':...')
+                .replace(/;/g, ';...')
+                // Add slight pause after commas
+                .replace(/,/g, ', ')
+                // Improve number pronunciation by adding spaces
+                .replace(/(\d)([A-Za-z])/g, '$1 $2')
+                .replace(/([A-Za-z])(\d)/g, '$1 $2')
+                // Add pauses around parentheses
+                .replace(/\(/g, '... (')
+                .replace(/\)/g, ') ...')
+                // Handle common abbreviations
+                .replace(/\bDr\./g, 'Doctor')
+                .replace(/\bMr\./g, 'Mister')
+                .replace(/\bMrs\./g, 'Misses')
+                .replace(/\bMs\./g, 'Miss')
+                .replace(/\bProf\./g, 'Professor')
+                .replace(/\bvs\./g, 'versus')
+                .replace(/\betc\./g, 'etcetera')
+                .replace(/\bi\.e\./g, 'that is')
+                .replace(/\be\.g\./g, 'for example')
+                // Handle URLs and emails more naturally
+                .replace(/https?:\/\/[^\s]+/g, 'web link')
+                .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, 'email address')
+                // Clean up multiple spaces and normalize
+                .replace(/\s+/g, ' ')
+                .replace(/\.{4,}/g, '...')
+                .trim();
+        }
+
+        // Process text based on current settings
+        function processText(originalText) {
+            let processedText = originalText;
+            
+            if (removeMarkdownCheckbox.checked) {
+                processedText = removeMarkdown(processedText);
+            }
+            
+            if (enhanceSSMLCheckbox.checked) {
+                processedText = enhanceForSpeech(processedText);
+            }
+            
+            return processedText;
+        }
+
+        // Update preview
+        function updatePreview() {
+            if (!showPreviewCheckbox.checked) {
+                previewSection.style.display = 'none';
+                return;
+            }
+            
+            previewSection.style.display = 'block';
+            const processed = processText(textArea.value);
+            previewText.textContent = processed;
+        }
+
+        // Event listeners for text processing options
+        textArea.addEventListener('input', updatePreview);
+        removeMarkdownCheckbox.addEventListener('change', updatePreview);
+        enhanceSSMLCheckbox.addEventListener('change', updatePreview);
+        showPreviewCheckbox.addEventListener('change', updatePreview);
+        voiceSelect.addEventListener('change', updatePreview);
 
         // Guidelines toggle
         function toggleGuidelines() {
@@ -753,6 +952,7 @@
                 targetBtn.classList.add('active');
                 currentLang = lang;
                 populateVoices();
+                updatePreview();
             }
         }
 
@@ -779,6 +979,7 @@
             if (options[newIndex] && !options[newIndex].disabled) {
                 voiceSelect.value = newIndex;
                 updateVoiceInfo();
+                updatePreview();
             }
         }
 
@@ -810,8 +1011,9 @@
                 // Update current language
                 currentLang = btn.dataset.lang;
 
-                // Update voice dropdown
+                // Update voice dropdown and preview
                 populateVoices();
+                updatePreview();
             });
         });
 
@@ -848,6 +1050,9 @@
             if (name.includes('aria') || name.includes('guy') || name.includes('zira')) score += 70; // Windows premium
             if (name.includes('alex') || name.includes('victoria') || name.includes('samantha')) score += 70; // macOS premium
             if (name.includes('google') && !voice.localService) score += 60; // Google Cloud voices
+
+            // Microsoft voices get speech enhancement boost
+            if (name.includes('microsoft') || name.includes('windows')) score += 40;
 
             // Voice characteristics
             if (!voice.localService) score += 30; // Cloud-based usually better
@@ -907,6 +1112,7 @@
             if (scoredVoices.length > 0) {
                 voiceSelect.value = scoredVoices[0].index;
                 updateVoiceInfo(); // Show info for auto-selected voice
+                updatePreview(); // Update preview with new voice
             }
         }
 
@@ -924,8 +1130,8 @@
 
         // Speech synthesis functions
         function speakText() {
-            const text = textArea.value.trim();
-            if (!text) {
+            const originalText = textArea.value.trim();
+            if (!originalText) {
                 showStatus('⚠️ Please enter some text first.');
                 return;
             }
@@ -940,7 +1146,10 @@
             synth.cancel();
             isPaused = false;
 
-            currentUtterance = new SpeechSynthesisUtterance(text);
+            // Process the text
+            const processedText = processText(originalText);
+            
+            currentUtterance = new SpeechSynthesisUtterance(processedText);
             const chosenVoice = voices[selectedIndex];
 
             if (chosenVoice) {
@@ -1011,7 +1220,10 @@
 
         // Handle voice loading
         if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
-            speechSynthesis.onvoiceschanged = populateVoices;
+            speechSynthesis.onvoiceschanged = () => {
+                populateVoices();
+                updatePreview();
+            };
         }
 
         // Handle browser support
@@ -1022,7 +1234,10 @@
         } else {
             // Initial setup
             pauseBtn.disabled = true;
-            setTimeout(updateLanguageCounts, 100);
+            setTimeout(() => {
+                updateLanguageCounts();
+                updatePreview();
+            }, 100);
         }
     </script>
 </body>
